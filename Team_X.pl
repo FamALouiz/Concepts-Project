@@ -40,3 +40,13 @@ proper_connection(Station_A, Station_B, Duration, Line):-
 proper_connection(Station_A, Station_B, Duration, Line):-
     unidirectional(Line),
     connection(Station_A, Station_B, Duration, Line).
+
+
+
+/*mins_to_twentyfour_hr/3
+mins_to_twentyfour_hr(Minutes, TwentyFour_Hours, TwentyFour_Mins) holds if
+TwentyFour_Hours: TwentyFour_Mins is the twenty-four hour representation of Minutes since midnight.*/
+
+mins_to_twentyfour_hr(Minutes, TwentyFour_Hours, TwentyFour_Mins):-
+    TwentyFour_Hours is (Minutes//60) mod 24,
+    TwentyFour_Mins is Minutes mod 60.
