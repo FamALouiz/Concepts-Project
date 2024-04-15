@@ -26,3 +26,17 @@ Day_Timings = [day_timing(1, mon), day_timing(1, tue), day_timing(1, wed), day_t
 group_days(Group, L):-
     findall(day_timing(Week, Day), scheduled_slot(Week, Day, _, _, Group), L1),
     list_to_set(L1, L).
+
+
+
+ /*proper_connection(Station_A, Station_B, Duration, Line) holds if Station_A and Station_B are
+connected on Line, and the time to go between them is Duration. All while taking into consideration
+the bidirectionality or lack thereof of Line.
+*/
+
+proper_connection(Station_A, Station_B, Duration, Line):-
+    \+ unidirectional(Line),
+    (connection(Station_A, Station_B, Duration, Line);connection(Station_B, Station_A, Duration, Line)).
+proper_connection(Station_A, Station_B, Duration, Line):-
+    unidirectional(Line),
+    connection(Station_A, Station_B, Duration, Line).
