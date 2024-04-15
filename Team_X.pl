@@ -11,6 +11,13 @@ day_slots(Group, Week, Day, Slots):-
 	findall(X, scheduled_slot(Week, Day, X, _, Group), Slots).
 
 /*
+holds if Slot is the earliest slot for Group on Day of week Week.
+Gets The Head of the list Slots that is the output of day_slots/4 (assumes that the list of slots is already sorted in ascending order of time)
+*/
+earliest_slot(Group, Week, Day, Slot) :-
+    day_slots(Group, Week, Day, [Slot|_]).
+
+/*
 This predicate is used to get a list of all the days and weeks in which a specific group has scheduled slots.
 
 Arguments:
@@ -50,3 +57,9 @@ TwentyFour_Hours: TwentyFour_Mins is the twenty-four hour representation of Minu
 mins_to_twentyfour_hr(Minutes, TwentyFour_Hours, TwentyFour_Mins):-
     TwentyFour_Hours is (Minutes//60) mod 24,
     TwentyFour_Mins is Minutes mod 60.
+/*
+twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) holds if Minutes since midnight is equivalent to the twenty-four hour formatted TwentyFour_Hours:TwentyFour_Mins.
+*/
+
+twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
+    Minutes is TwentyFour_Hours * 60 + TwentyFour_Mins.
