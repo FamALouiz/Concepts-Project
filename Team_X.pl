@@ -18,11 +18,8 @@ earliest_slot(Group, Week, Day, Slot) :-
     day_slots(Group, Week, Day, [Slot|_]).
 
 /*
-This predicate is used to get a list of all the days and weeks in which a specific group has scheduled slots.
+This predicate holds if Day_Timings is a list of all the days and weeks in which a specific group has scheduled slots.
 
-Arguments:
-Group: The group for which to find the scheduled days.
-L: The resulting list of `day_timing(Week, Day)` structures
 
 Example usage:
 ?- group_days(met_4, Day_Timings).
