@@ -58,20 +58,19 @@ app(L1,L2,L):-
 
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
-    %S1=[route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration)],
-    R2=route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration),
+    R1=route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration),
     reverse(Routes_So_Far, [H|T]),
     H=route(Conn_Line1,_,_,_),
     \+ Conn_Line=Conn_Line1,
     reverse([H|T], R),
-    app(R,R2,Routes).
+    app(R,R1,Routes).
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
-    reverse(Routes_So_Far, [H|T]),
-    H=route(Conn_Line, Start, Conn_Source, Duration),
-    H1=route(Conn_Line, Start, Conn_Destination, Duration1),
-    Duration1 is Duration + Conn_Duration,
-    reverse([H1|T], Routes).
+    reverse(Routes_So_Far, [H1|T]),
+    H1=route(Conn_Line, Start, Conn_Source, Duration1),
+    H=route(Conn_Line, Start, Conn_Destination, Duration),
+    Duration is Duration1 + Conn_Duration,
+    reverse([H|T], Routes).
 
 /*slot_to_mins(Slot_Num, Minutes) holds if Minutes since midnight is equivalent to the start time of a
 slot whose number is Slot_Num
