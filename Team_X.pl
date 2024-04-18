@@ -118,6 +118,7 @@ connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Ro
     length(Temp_Routes, Length),
     Length =< Max_Routes,
     Temp_Duration =< Max_Duration,
+    not(strike(Line, Week, Day)),
     proper_connection(Source, Intermediate, Duration_Added, Transportation),
     New_Duration is Temp_Duration + Duration_Added,
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Routes, Routes_New),
