@@ -147,17 +147,21 @@ len([_|T], N) :- len(T, N1), N is N1 + 1.
 
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
-    connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, []).
+    connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, []).
 
-connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes).
+connected_temp(Source, Source, _, _, Max_Duration, Max_Routes, Duration, Routes, Duration, Routes1):-
+    length(Routes1, Length),
+    Length =< Max_Routes,
+    Duration =< Max_Duration,
+    list_to_set(Routes1, Routes).
 
-connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
+connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
     len(Temp_Routes, Length),
     Length =< Max_Routes,
-    Temp_Duration =< Max_Duration,
     line(Transportation, Line),
-    not(strike(Line, Week, Day)),
+    not(strike(Line, Week, Day)),   
     proper_connection(Source, Intermediate, Duration_Added, Transportation),
     New_Duration is Temp_Duration + Duration_Added,
+    New_Duration =< Max_Duration,
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Routes, Routes_New),
-    connected(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New).
+    connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New).
