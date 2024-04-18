@@ -53,16 +53,13 @@ app([],L,L).
 app(L1,L2,L):-
     L1=[H|T], L=[H|T1], app(T,L2,T1).
 
-route(Line, Start_Station, End_Station, Duration,L):-
-    L=[route(Line,Start_Station,End_Station,Duration)].
-
 
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, [], [route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration)]):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line).
 
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
-    route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration,R1),
+    R1=[route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration)],
     reverse(Routes_So_Far, [H|T]),
     H=route(Conn_Line1,_,_,_),
     \+ Conn_Line=Conn_Line1,
@@ -72,9 +69,9 @@ append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Route
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
     reverse(Routes_So_Far, [H1|T]),
-    route(Conn_Line, Start, Conn_Source, Duration1,H1),
+    H1=route(Conn_Line,Start,Conn_Source,Duration2),
     H=route(Conn_Line, Start, Conn_Destination, Duration),
-    Duration is Duration1 + Conn_Duration,
+    Duration is Duration2 + Conn_Duration,
     reverse([H|T], Routes).
 
 
