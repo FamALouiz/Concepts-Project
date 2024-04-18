@@ -99,10 +99,41 @@ twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
 
 % ============================================================================================
 
+/*conencted/10 holds if possible to reach specific destination
+from Source on a specific day taking in consideration that combined
+duration doesn't exceed a maximum duration and number of routes
+doesn't exceed a maximum number of routes and gives a list of 
+previous stations which shouldn't be visited again and the 
+traversed routes so far before reaching the Source*/
 
+connected/10(Source,Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
 
+    connected(amrumer_str, leopoldplatz, 1, mon, 2, 1, 2, [westhafen], [route(u9,
+        westhafen, amrumer_str, 1)], [route(u9, westhafen, leopoldplatz, 3)]).
 
+append_connection(friedrichstr, oranienburger_tor, 1, u6, [route(u5, schillingstr,
+alexanderplatz, 2), route(s5, alexanderplatz, friedrichstr, 4)], Routes).
+Routes = [route(u5, schillingstr, alexanderplatz, 2), route(s5, alexanderplatz,
+friedrichstr, 4), route(u6, friedrichstr, oranienburger_tor, 1)].
+proper_connection(albertinenstr, antonplatz, 1, m4).
+• day_timing(Week, Day) encodes a timing on Day of week Week.
 
+route(Line, Start_Station, End_Station, Duration)
+journey(Week_Num, Week_Day, Start_Hour, Start_Minute, Total_Duration, Routes) encodes
+a journey on Week_Day of week Week_Num which starts at Start_Hour:Start_Minute, takes a
+total duration of Total_Duration minutes, and consist of taking Routes.
+
+line(Line_Name, Line_Type) indicates that Line_Name is of type Line_Type. Example: line(u6 ubahn),
+line(s5, sbahn).
+• unidirectional(Line) indicates that Line is unidirectional (i.e. connections between stations are
+one way). Example: unidirectional(s42).
+• campus_reachable(Station) indicates that campus is reachable from Station.
+Example: campus_reachable(borsigwerke).
+• strike(Line_Type, Week_Num, Week_Day) indicates that there is a strike on Week_Day of a week
+Week_Num for all lines of Line_Type. Example: strike(ubahn, 3, wed).
+• connection(Station_A, Station_B, Duration, Line) indicates that Station_A is connected to
+Station_B on Line, and the time to go between them is Duration.
+Example: connection(hermannplatz, rathaus_neukoelln, 1, u7).
 
 
 % ============================================================================================
@@ -123,4 +154,3 @@ connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Ro
     New_Duration is Temp_Duration + Duration_Added,
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Routes, Routes_New),
     connected(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New).
-
