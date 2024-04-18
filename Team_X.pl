@@ -45,6 +45,40 @@ proper_connection(Station_A, Station_B, Duration, Line):-
     unidirectional(Line),
     connection(Station_A, Station_B, Duration, Line).
 
+/*append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far
+, Routes) holds if Routes (see section 3) is the result of appending a connection from Conn_Source to
+Conn_Destination on Conn_Line which takes Conn_Duration minutes, to Routes_So_Far.
+*/
+app([],L,L).
+app(L1,L2,L):-
+    L1=[H|T], L=[H|T1], app(T,L2,T1).
+
+append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
+    proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
+    R1=route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration),
+    reverse(Routes_So_Far, [H|T]),
+    H=route(Conn_Line1,_,_,_),
+    \+ Conn_Line=Conn_Line1,
+    reverse([H|T], R),
+    app(R,R1,Routes).
+append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
+    proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
+    reverse(Routes_So_Far, [H1|T]),
+    H1=route(Conn_Line, Start, Conn_Source, Duration1),
+    H=route(Conn_Line, Start, Conn_Destination, Duration),
+    Duration is Duration1 + Conn_Duration,
+    reverse([H|T], Routes).
+
+/*slot_to_mins(Slot_Num, Minutes) holds if Minutes since midnight is equivalent to the start time of a
+slot whose number is Slot_Num
+*/
+slot_to_mins(Slot_Num, Minutes):-
+    slot(Slot_Num, Start_Hour, Start_Minute),
+    Minutes is (Start_Hour * 60)+Start_Minute.
+
+
+
+
 
 
 /*mins_to_twentyfour_hr/3
