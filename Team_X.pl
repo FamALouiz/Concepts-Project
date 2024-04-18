@@ -53,9 +53,13 @@ app([],L,L).
 app(L1,L2,L):-
     L1=[H|T], L=[H|T1], app(T,L2,T1).
 
+route(Line, Start_Station, End_Station, Duration,L):-
+    L=[route(Line,Start_Station,End_Station,Duration)].
+
+
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
-    R1=route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration),
+    route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration,R1),
     reverse(Routes_So_Far, [H|T]),
     H=route(Conn_Line1,_,_,_),
     \+ Conn_Line=Conn_Line1,
@@ -65,10 +69,11 @@ append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Route
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
     reverse(Routes_So_Far, [H1|T]),
-    H1=route(Conn_Line, Start, Conn_Source, Duration1),
+    route(Conn_Line, Start, Conn_Source, Duration1,H1),
     H=route(Conn_Line, Start, Conn_Destination, Duration),
     Duration is Duration1 + Conn_Duration,
     reverse([H|T], Routes).
+
 
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, [], [route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration)]):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line).
@@ -79,6 +84,10 @@ slot whose number is Slot_Num
 slot_to_mins(Slot_Num, Minutes):-
     slot(Slot_Num, Start_Hour, Start_Minute),
     Minutes is (Start_Hour * 60)+Start_Minute.
+
+
+
+
 
 
 /*mins_to_twentyfour_hr/3
@@ -102,12 +111,10 @@ from Source on a specific day taking in consideration that combined
 duration doesn't exceed a maximum duration and number of routes
 doesn't exceed a maximum number of routes and gives a list of 
 previous stations which shouldn't be visited again and the 
-traversed routes so far before reaching the Source*/
+traversed routes so far before reaching the Source
 
 connected/10(Source,Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
-    proper_connection(Source, Destination, Max_Duration, Line),
-    line(Line,L),
-    \+strike(L,Week,Day),
+
     connected(amrumer_str, leopoldplatz, 1, mon, 2, 1, 2, [westhafen], [route(u9,
         westhafen, amrumer_str, 1)], [route(u9, westhafen, leopoldplatz, 3)]).
 
@@ -127,26 +134,32 @@ line(Line_Name, Line_Type) indicates that Line_Name is of type Line_Type. Exampl
 line(s5, sbahn).
 • unidirectional(Line) indicates that Line is unidirectional (i.e. connections between stations are
 one way). Example: unidirectional(s42).
-
+• campus_reachable(Station) indicates that campus is reachable from Station.
+Example: campus_reachable(borsigwerke).
 • strike(Line_Type, Week_Num, Week_Day) indicates that there is a strike on Week_Day of a week
 Week_Num for all lines of Line_Type. Example: strike(ubahn, 3, wed).
 • connection(Station_A, Station_B, Duration, Line) indicates that Station_A is connected to
 Station_B on Line, and the time to go between them is Duration.
 Example: connection(hermannplatz, rathaus_neukoelln, 1, u7).
-
+*/
 
 % ============================================================================================
+
+len([], 0).
+len([_|T], N) :- len(T, N1), N is N1 + 1.
 
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, []).
 
-connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes).
+connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes):- !.
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
-    length(Temp_Routes, Length),
+    len(Temp_Routes, Length),
     Length =< Max_Routes,
     Temp_Duration =< Max_Duration,
+    line(Transportation, Line),
+    not(strike(Line, Week, Day)),
     proper_connection(Source, Intermediate, Duration_Added, Transportation),
     New_Duration is Temp_Duration + Duration_Added,
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Routes, Routes_New),
