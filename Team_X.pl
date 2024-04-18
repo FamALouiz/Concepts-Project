@@ -57,6 +57,9 @@ route(Line, Start_Station, End_Station, Duration,L):-
     L=[route(Line,Start_Station,End_Station,Duration)].
 
 
+append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, [], [route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration)]):-
+    proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line).
+
 append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Routes_So_Far, Routes):-
     proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line),
     route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration,R1),
@@ -74,9 +77,6 @@ append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Route
     Duration is Duration1 + Conn_Duration,
     reverse([H|T], Routes).
 
-
-append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, [], [route(Conn_Line,Conn_Source,Conn_Destination,Conn_Duration)]):-
-    proper_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line).
 
 /*slot_to_mins(Slot_Num, Minutes) holds if Minutes since midnight is equivalent to the start time of a
 slot whose number is Slot_Num
@@ -152,7 +152,7 @@ len([_|T], N) :- len(T, N1), N is N1 + 1.
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, []).
 
-connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes):- !.
+connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes).
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
     len(Temp_Routes, Length),
