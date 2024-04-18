@@ -95,5 +95,32 @@ twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) holds if Minut
 twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
     Minutes is TwentyFour_Hours * 60 + TwentyFour_Mins.
 
-connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
+% ============================================================================================
+
+
+
+
+
+
+
+% ============================================================================================
+
+
+connected(Source, Source, _, _, _, _, _, []).
+
+connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, _):-
+    connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, [], 0).
     
+
+conntected(Source, Source, _, _, _, _, Duration, _, Duration).
+
+% Assuming the connection is only 1 line
+connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, _, Routes, Temp_Duration):-
+    length(Routes) =< Max_Routes,
+    Temp_Duration =< Max_Duration,
+    not(strike(Transportation, Week, Day)), 
+    proper_connection(Source, X, Duration_added, Transportation),  
+    New_Duration is Temp_Duration + Duration_added,
+    append_connection(Source, X, Duration_added, Transportation, Routes, New_Routes),
+    connected(X, Destination, Week, Day, Max_Duration, Max_Routes, New_Duration, New_Routes). 
+
