@@ -104,7 +104,7 @@ from Source on a specific day taking in consideration that combined
 duration doesn't exceed a maximum duration and number of routes
 doesn't exceed a maximum number of routes and gives a list of 
 previous stations which shouldn't be visited again and the 
-traversed routes so far before reaching the Source*/
+traversed routes so far before reaching the Source
 
 connected/10(Source,Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
 
@@ -134,7 +134,7 @@ Week_Num for all lines of Line_Type. Example: strike(ubahn, 3, wed).
 • connection(Station_A, Station_B, Duration, Line) indicates that Station_A is connected to
 Station_B on Line, and the time to go between them is Duration.
 Example: connection(hermannplatz, rathaus_neukoelln, 1, u7).
-
+*/
 
 % ============================================================================================
 
