@@ -138,17 +138,20 @@ Example: connection(hermannplatz, rathaus_neukoelln, 1, u7).
 
 % ============================================================================================
 
+len([], 0).
+len([_|T], N) :- len(T, N1), N is N1 + 1.
 
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, []).
 
-connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes).
+connected(Source, Source, _, _, _, _, Duration, Routes, Duration, Routes):- !.
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
-    length(Temp_Routes, Length),
+    len(Temp_Routes, Length),
     Length =< Max_Routes,
     Temp_Duration =< Max_Duration,
+    line(Transportation, Line),
     not(strike(Line, Week, Day)),
     proper_connection(Source, Intermediate, Duration_Added, Transportation),
     New_Duration is Temp_Duration + Duration_Added,
