@@ -60,3 +60,6 @@ twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) holds if Minut
 
 twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
     Minutes is TwentyFour_Hours * 60 + TwentyFour_Mins.
+
+connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
+    
