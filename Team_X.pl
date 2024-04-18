@@ -107,6 +107,8 @@ twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
 
 % ============================================================================================
 
+
+
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, []).
 
