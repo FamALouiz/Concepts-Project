@@ -145,7 +145,7 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
     connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New).*/
     
 travel_plan([],_,_,_,[]).
-travel_plan([H:T], Group, Max_Duration, Max_Routes, Journeys):-
+travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
         scheduled_slot(Week, Day, Slot_Num,_,Group),
         slot(Slot_Num, Start_Hour, Start_Min),
         connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
