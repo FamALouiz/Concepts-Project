@@ -155,6 +155,11 @@ travel_planHelper([],_,_,_,_,[]).
 
 travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
     H1 = day_timing(Week, Day),
+    \+earliest_slot(Group, Week, Day, _),
+    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, T1, Journeys).
+
+travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
+    H1 = day_timing(Week, Day),
     earliest_slot(Group, Week, Day, Slot_Num),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
