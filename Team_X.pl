@@ -133,7 +133,7 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
     connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New,  Temp_Routes_New).
 
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
-    connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, Routes_So_Far, Prev_Stations ).
+    connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, Routes_So_Far, Prev_Stations).
 
 /*connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
     len(Temp_Routes, Length),
@@ -148,21 +148,27 @@ connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Pr
     
 travel_plan([],_,_,_,[]).
 travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+    group_days(Group, Day_Timings),
+    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, Day_Timings, Journeys).
+
+travel_planHelper([],_,_,_,_,[]).
+
+travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
+    H1 = day_timing(Week, Day),
     earliest_slot(Group, Week, Day, Slot_Num),
-    scheduled_slot(Week, Day, Slot_Num,_,Group),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
+    travel_planHelper(T,Group, Max_Duration, Max_Routes, T1,till_now_Journeys),
     append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
     %Journeys = [H|T],
-    %shortest(T, H, shortestJourney).
+    %shortest(T, H, shortestJourney).    
 
-travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1], Journeys):-
+    H1 = day_timing(Week, Day),
     earliest_slot(Group, Week, Day, Slot_Num),
-    scheduled_slot(Week, Day, Slot_Num,_,Group),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, tegel, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
+    travel_planHelper(T,Group, Max_Duration, Max_Routes, T1, till_now_Journeys),
     append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
     %Journeys = [H|T],
     %shortest(T, H, shortestJourney).
