@@ -39,8 +39,8 @@ the bidirectionality or lack thereof of Line.
 */
 
 proper_connection(Station_A, Station_B, Duration, Line):-
-    \+ unidirectional(Line),
-    (connection(Station_A, Station_B, Duration, Line);connection(Station_B, Station_A, Duration, Line)).
+    (connection(Station_A, Station_B, Duration, Line);connection(Station_B, Station_A, Duration, Line)),
+    \+ unidirectional(Line).
 proper_connection(Station_A, Station_B, Duration, Line):-
     unidirectional(Line),
     connection(Station_A, Station_B, Duration, Line).
