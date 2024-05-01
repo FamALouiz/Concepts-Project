@@ -146,8 +146,15 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
     
 travel_plan([],_,_,_,[]).
 travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
-        scheduled_slot(Week, Day, Slot_Num,_,Group),
-        slot(Slot_Num, Start_Hour, Start_Min),
-        connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-        travel_plan(T,Group, Max_Duration, Max_Routes, Journeys),
-        append(till_now_Jounrneys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
+    scheduled_slot(Week, Day, Slot_Num,_,Group),
+    slot(Slot_Num, Start_Hour, Start_Min),
+    connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
+    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
+    append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
+
+travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+    scheduled_slot(Week, Day, Slot_Num,_,Group),
+    slot(Slot_Num, Start_Hour, Start_Min),
+    connected(H, tegel, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
+    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
+    append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
