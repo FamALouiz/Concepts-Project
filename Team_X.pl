@@ -152,7 +152,7 @@ travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys, shortestJourney):-
     connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
     travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
     append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys),
-    Journeys = [H|T]
+    Journeys = [H|T],
     shortest(T, H, shortestJourney).
 
 travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
@@ -162,7 +162,7 @@ travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
     connected(H, tegel, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
     travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
     append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys),
-    Journeys = [H|T]
+    Journeys = [H|T],
     shortest(T, H, shortestJourney).
 
 shortest([], Acc, Acc).
