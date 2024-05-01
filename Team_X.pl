@@ -8,7 +8,7 @@
 gets a list of all slots of a specific group in a certain week and day
 */
 day_slots(Group, Week, Day, Slots):-
-	findall(X, scheduled_slot(Week, Day, X, _, Group), Slots).
+    setof(X,scheduled_slot(Week, Day, X, _, Group),Slots).
 
 /*
 holds if Slot is the earliest slot for Group on Day of week Week.
