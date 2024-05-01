@@ -132,6 +132,8 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Ans, Routes_New),
     connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New,  Temp_Routes_New).
 
+connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
+    connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, Prev_Stations, Routes_So_Far).
 
 /*connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
     len(Temp_Routes, Length),
@@ -150,17 +152,17 @@ travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys, shortestJourney):-
     scheduled_slot(Week, Day, Slot_Num,_,Group),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
+    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys, shortestJourney),
     append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys),
     Journeys = [H|T],
     shortest(T, H, shortestJourney).
 
-travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys, shortestJourney):-
     earliest_slot(Group, Week, Day, Slot_Num),
     scheduled_slot(Week, Day, Slot_Num,_,Group),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, tegel, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys),
+    travel_plan(T,Group, Max_Duration, Max_Routes, till_now_Journeys, shortestJourney),
     append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys),
     Journeys = [H|T],
     shortest(T, H, shortestJourney).
