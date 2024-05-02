@@ -97,7 +97,11 @@ twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
 len([], 0).
 len([_|T], N) :- len(T, N1), N is N1 + 1.
 
-
+/*
+Gives a list of routes where the combined Duration of Routes does not exceed Max_Duration, and the number
+of Routes does not exceed Max_Routes.
+Connected calls a connected_temp with an extra variable to store the till now total duration of routes
+*/
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, [], []).
 
@@ -124,6 +128,7 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
     connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, Routes_So_Far, Prev_Stations).
 
+% Travel Plan calls helper procedure with an extra variable Day timings which is a list of day_timing(Week, Day) so to recursive call every home station with every day in a week for whole semester
 travel_plan([],_,_,_,[],[]).
 
 travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
