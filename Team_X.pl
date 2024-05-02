@@ -20,7 +20,6 @@ earliest_slot(Group, Week, Day, Slot) :-
 /*
 This predicate holds if Day_Timings is a list of all the days and weeks in which a specific group has scheduled slots.
 
-
 Example usage:
 ?- group_days(met_4, Day_Timings).
 Day_Timings = [day_timing(1, mon), day_timing(1, tue), day_timing(1, wed), day_timing
@@ -30,8 +29,6 @@ Day_Timings = [day_timing(1, mon), day_timing(1, tue), day_timing(1, wed), day_t
 group_days(Group, L):-
     findall(day_timing(Week, Day), scheduled_slot(Week, Day, _, _, Group), L1),
     list_to_set(L1, L).
-
-
 
  /*proper_connection(Station_A, Station_B, Duration, Line) holds if Station_A and Station_B are
 connected on Line, and the time to go between them is Duration. All while taking into consideration
@@ -76,18 +73,12 @@ append_connection(Conn_Source, Conn_Destination, Conn_Duration, Conn_Line, Route
     Duration is Duration2 + Conn_Duration,
     reverse([H|T], Routes).
 
-
 /*slot_to_mins(Slot_Num, Minutes) holds if Minutes since midnight is equivalent to the start time of a
 slot whose number is Slot_Num
 */
 slot_to_mins(Slot_Num, Minutes):-
     slot(Slot_Num, Start_Hour, Start_Minute),
     Minutes is (Start_Hour * 60)+Start_Minute.
-
-
-
-
-
 
 /*mins_to_twentyfour_hr/3
 mins_to_twentyfour_hr(Minutes, TwentyFour_Hours, TwentyFour_Mins) holds if
@@ -102,8 +93,6 @@ twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) holds if Minut
 
 twentyfour_hr_to_mins(TwentyFour_Hours, TwentyFour_Mins, Minutes) :-
     Minutes is TwentyFour_Hours * 60 + TwentyFour_Mins.
-
-
 
 len([], 0).
 len([_|T], N) :- len(T, N1), N is N1 + 1.
@@ -135,96 +124,18 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
     connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, Routes_So_Far, Prev_Stations).
 
-/*connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Temp_Duration, Temp_Routes):-
-    len(Temp_Routes, Length),
-    Length =< Max_Routes,
-    line(Transportation, Line),
-    not(strike(Line, Week, Day)),   
-    proper_connection(Source, Intermediate, Duration_Added, Transportation),
-    New_Duration is Temp_Duration + Duration_Added,
-    New_Duration =< Max_Duration,
-    append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Routes, Routes_New),
-    connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New).*/
+travel_plan([],_,_,_,[],[]).
 
-
-%   This is the code that's working, used the one that was right before my push 
-%   (the comment on that change was "made some changes in travel plan procedure" by daniel)
 travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
-    findall(Journeys,travel_planh([H|T], Group, Max_Duration, Max_Routes, Journeys),Journeys).
-
-travel_planh([],_,_,_,[],[]).
-
-travel_planh([H|T], Group, Max_Duration, Max_Routes, Journeys):-
     group_days(Group, Day_timings),
-    travel_planhh([H|T], Group, Max_Duration, Max_Routes, Day_timings,Journeys).
-    %scheduled_slot(Week, Day, Slot_Num,_,Group),
+    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, Day_timings,Journeys).
 
-travel_planhh(_,_,_,_,[],[]).
-travel_planhh(Home_Stations, Group, Max_Duration, Max_Routes, [day_timing(Week, Day)|T1],Journeys):-
+travel_planHelper(_,_,_,_,[],[]).
+travel_planHelper(Home_Stations, Group, Max_Duration, Max_Routes, [day_timing(Week, Day)|T1],Journeys):-
     earliest_slot(Group, Week, Day, Slot_Num),
     slot(Slot_Num,Start_Hour, Start_Min),
     campus_reachable(Campus),
     member(Station, Home_Stations),
     connected(Station,Campus, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_planhh(Home_Stations,Group, Max_Duration, Max_Routes,T1, Till_now_Journeys),
+    travel_planHelper(Home_Stations,Group, Max_Duration, Max_Routes,T1, Till_now_Journeys),
     append([journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)],Till_now_Journeys,Journeys).
-/* 
-shortest([], Acc, Acc).
-shortest([H|T], Acc, ShortestJourney):-
-    H = journey(_,_, _, _, Duration1, _),
-    Acc = journey(_,_, _, _, Duration2, _),
-    Duration2>Duration1,
-    Acc = H,
-    shortest(T, Acc, ShortestJourney).
-*/
-
-
-
-
-
-
-
-
-
-
-
-  % This is the codee that was last pushed
-/*travel_plan([],_,_,_,[]).
-travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
-    group_days(Group, Day_Timings),
-    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, Day_Timings, Journeys).
-
-travel_planHelper([],_,_,_,_,[]).
-
-travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
-    H1 = day_timing(Week, Day),
-    \+earliest_slot(Group, Week, Day, _),
-    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, T1, Journeys).
-
-travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
-    H1 = day_timing(Week, Day),
-    earliest_slot(Group, Week, Day, Slot_Num),
-    slot(Slot_Num,Start_Hour, Start_Min),
-    connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_planHelper(T,Group, Max_Duration, Max_Routes, T1,till_now_Journeys),
-    append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
-    %Journeys = [H|T],
-    %shortest(T, H, shortestJourney).    
-
-travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1], Journeys):-
-    H1 = day_timing(Week, Day),
-    earliest_slot(Group, Week, Day, Slot_Num),
-    slot(Slot_Num,Start_Hour, Start_Min),
-    connected(H, tegel, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_planHelper(T,Group, Max_Duration, Max_Routes, T1, till_now_Journeys),
-    append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
-    %Journeys = [H|T],
-    %shortest(T, H, shortestJourney).
-
-shortest([], Acc, Acc).
-shortest([H|T], Acc, shortestJourney):-
-    H = journey(_,_, _, _, Duration1, _),
-    Acc = journey(_,_, _, _, Duration2, _),
-    Duration2>Duration1,
-    Acc = H,
-    shortest(T, Acc, shortestJourney). */
