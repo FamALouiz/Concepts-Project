@@ -138,9 +138,11 @@ travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
 travel_planHelper(_,_,_,_,[],[]).
 travel_planHelper(Home_Stations, Group, Max_Duration, Max_Routes, [day_timing(Week, Day)|T1],Journeys):-
     earliest_slot(Group, Week, Day, Slot_Num),
-    slot(Slot_Num,Start_Hour, Start_Min),
+    slot_to_mins(Slot_Num, Minutes),
     campus_reachable(Campus),
     member(Station, Home_Stations),
     connected(Station,Campus, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
+    Remaining_Minutes = Minutes - Duration,
+    mins_to_twentyfour_hr(Remaining_Minutes, TwentyFour_Hours, TwentyFour_Mins),
     travel_planHelper(Home_Stations,Group, Max_Duration, Max_Routes,T1, Till_now_Journeys),
-    append([journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)],Till_now_Journeys,Journeys).
+    append([journey(Week,Day, TwentyFour_Hours, TwentyFour_Mins, Duration, Routes)],Till_now_Journeys,Journeys).
