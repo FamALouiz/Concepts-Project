@@ -145,26 +145,79 @@ connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Pr
     New_Duration =< Max_Duration,
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Routes, Routes_New),
     connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New).*/
-    
-travel_plan([],_,_,_,[]).
 
-travel_plan([H|T], Group, Max_Duration, Max_Routes,Journeys):-
+
+%   This is the code that's working, used the one that was right before my push 
+%   (the comment on that change was "made some changes in travel plan procedure" by daniel)
+travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+    findall(Journeys,travel_planh([H|T], Group, Max_Duration, Max_Routes, Journeys),Journeys).
+
+travel_planh([],_,_,_,[],[]).
+
+travel_planh([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+    group_days(Group, Day_timings),
+    travel_planhh([H|T], Group, Max_Duration, Max_Routes, Day_timings,Journeys).
+    %scheduled_slot(Week, Day, Slot_Num,_,Group),
+
+travel_planhh(_,_,_,_,[],[]).
+travel_planhh(Home_Stations, Group, Max_Duration, Max_Routes, [day_timing(Week, Day)|T1],Journeys):-
+    earliest_slot(Group, Week, Day, Slot_Num),
+    slot(Slot_Num,Start_Hour, Start_Min),
+    campus_reachable(Campus),
+    member(Station, Home_Stations),
+    connected(Station,Campus, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
+    travel_planhh(Home_Stations,Group, Max_Duration, Max_Routes,T1, Till_now_Journeys),
+    append([journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)],Till_now_Journeys,Journeys).
+/* 
+shortest([], Acc, Acc).
+shortest([H|T], Acc, ShortestJourney):-
+    H = journey(_,_, _, _, Duration1, _),
+    Acc = journey(_,_, _, _, Duration2, _),
+    Duration2>Duration1,
+    Acc = H,
+    shortest(T, Acc, ShortestJourney).
+*/
+
+
+
+
+
+
+
+
+
+
+
+  % This is the codee that was last pushed
+/*travel_plan([],_,_,_,[]).
+travel_plan([H|T], Group, Max_Duration, Max_Routes, Journeys):-
+    group_days(Group, Day_Timings),
+    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, Day_Timings, Journeys).
+
+travel_planHelper([],_,_,_,_,[]).
+
+travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
+    H1 = day_timing(Week, Day),
+    \+earliest_slot(Group, Week, Day, _),
+    travel_planHelper([H|T], Group, Max_Duration, Max_Routes, T1, Journeys).
+
+travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1] ,Journeys):-
+    H1 = day_timing(Week, Day),
     earliest_slot(Group, Week, Day, Slot_Num),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, borsigwerke, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_plan(T,Group, Max_Duration, Max_Routes,Till_now_Journeys),
-    \+member(journey(Week,Day, Start_Hour, Start_Min, Duration, Routes),Till_now_Journeys),
-    append(Till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
+    travel_planHelper(T,Group, Max_Duration, Max_Routes, T1,till_now_Journeys),
+    append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
     %Journeys = [H|T],
     %shortest(T, H, shortestJourney).    
 
-travel_plan([H|T], Group, Max_Duration, Max_Routes,Journeys):-
+travel_planHelper([H|T], Group, Max_Duration, Max_Routes, [H1|T1], Journeys):-
+    H1 = day_timing(Week, Day),
     earliest_slot(Group, Week, Day, Slot_Num),
     slot(Slot_Num,Start_Hour, Start_Min),
     connected(H, tegel, Week, Day, Max_Duration, Max_Routes, Duration, Routes),
-    travel_plan(T,Group, Max_Duration, Max_Routes,Till_now_Journeys),
-    \+member(journey(Week,Day, Start_Hour, Start_Min, Duration, Routes),Till_now_Journeys),
-    append(Till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
+    travel_planHelper(T,Group, Max_Duration, Max_Routes, T1, till_now_Journeys),
+    append(till_now_Journeys, [journey(Week,Day, Start_Hour, Start_Min, Duration, Routes)], Journeys).
     %Journeys = [H|T],
     %shortest(T, H, shortestJourney).
 
@@ -174,4 +227,4 @@ shortest([H|T], Acc, shortestJourney):-
     Acc = journey(_,_, _, _, Duration2, _),
     Duration2>Duration1,
     Acc = H,
-    shortest(T, Acc, shortestJourney).
+    shortest(T, Acc, shortestJourney). */
