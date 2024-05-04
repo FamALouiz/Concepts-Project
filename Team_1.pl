@@ -105,6 +105,9 @@ Connected calls a connected_temp with an extra variable to store the till now to
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, [], []).
 
+connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Routes_So_Far, Prev_Stations):-
+    connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, [], []).
+
 connected_temp(Source, Source, _, _, Max_Duration, Max_Routes, Duration, Routes, Duration, Routes, _):-
     length(Routes, Length),
     Length =< Max_Routes,
