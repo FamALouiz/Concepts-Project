@@ -12,10 +12,12 @@ day_slots(Group, Week, Day, Slots):-
 
 /*
 holds if Slot is the earliest slot for Group on Day of week Week.
-Gets The Head of the list Slots that is the output of day_slots/4 (assumes that the list of slots is already sorted in ascending order of time)
+sorts the Slots list from day_slots/4 and gets the head of the list.
 */
 earliest_slot(Group, Week, Day, Slot) :-
-    day_slots(Group, Week, Day, [Slot|_]).
+    day_slots(Group, Week, Day, Slots), 
+    sort(Slots, SortedSlots), 
+    SortedSlots = [Slot|_].
 
 /*
 This predicate holds if Day_Timings is a list of all the days and weeks in which a specific group has scheduled slots.
