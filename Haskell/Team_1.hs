@@ -43,4 +43,19 @@ isGoal (S (_,_) listOfCells _ _)=False
 --NextMyStates
 nextMyStates :: MyState -> [MyState]
 nextMyStates s= filter (/=Null) [up s,down s,left s,right s,dig s]
+
+-search 
+search :: [MyState] -> MyState
+search (state:tail) | isGoal state = state
+                    | otherwise    = search (tail ++ (nextMyStates state))
+
+
+--constructSolution
+constructSolution :: MyState -> [String]
+constructSolution ( Null)= []
+constructSolution (S _ _ action state)= if action == "" then (constructSolution state) else (constructSolution state)++[action]
+
+--solve 
+solve :: Cell -> [Cell] -> [String]
+solve cell l = constructSolution (search([S cell l "" Null]))
 >>>>>>> Stashed changes
