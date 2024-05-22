@@ -40,5 +40,7 @@ isGoal :: MyState -> Bool
 isGoal (S (_,_) [] _ _)=True
 isGoal (S (_,_) listOfCells _ _)=False
 
-
+--NextMyStates
+nextMyStates :: MyState -> [MyState]
+nextMyStates s= filter (/=Null) [up s,down s,left s,right s,dig s]
 >>>>>>> Stashed changes
