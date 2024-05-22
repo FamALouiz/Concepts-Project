@@ -8,6 +8,15 @@ data MyState = Null | S Cell [Cell] String MyState deriving (Show, Eq)
 up :: MyState -> MyState
 up (S (x, y) listOfCells s state) = if x - 1 < 0 then Null else S (x - 1, y) listOfCells "up" (S (x, y) listOfCells s state)
 
+--down
+down :: MyState -> MyState
+down (S (x, y) listOfCells s state) = if x +1 >3  then Null else S (x +1, y) listOfCells "down" (S (x, y) listOfCells s state)
+
+--left
+left :: MyState -> MyState
+left (S (x, y) listOfCells s state) = if y-1  <0  then Null else S (x , y-1) listOfCells "left" (S (x, y) listOfCells s state)
+
+
 
 -- Remove Item helper function
 removeItem _ [] = []
