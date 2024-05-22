@@ -52,6 +52,14 @@ constructSolution :: MyState -> [String]
 constructSolution ( Null)= []
 constructSolution (S _ _ action state)= if action == "" then (constructSolution state) else (constructSolution state)++[action]
 
--- Solve 
+--solve
 solve :: Cell -> [Cell] -> [String]
-solve cell l = constructSolution (search([S cell l "" Null]))
+solve root goldenCells
+    |  checkGolden (root:goldenCells)= error "Oooh NOOOO, broo get the robot inside the grid!!!"
+    | otherwise = constructSolution (search([S root goldenCells "" Null]))
+
+
+checkGolden []=True
+checkGolden (cell:tail)= (isValidCell cell) && (checkGolden tail)
+
+isValidCell (x,y)= (x<=3 && x>=0 && y<=3 && y>=0)
