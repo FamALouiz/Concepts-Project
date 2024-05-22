@@ -44,7 +44,7 @@ isGoal (S (_,_) listOfCells _ _)=False
 nextMyStates :: MyState -> [MyState]
 nextMyStates s= filter (/=Null) [up s,down s,left s,right s,dig s]
 
--search 
+--search 
 search :: [MyState] -> MyState
 search (state:tail) | isGoal state = state
                     | otherwise    = search (tail ++ (nextMyStates state))
