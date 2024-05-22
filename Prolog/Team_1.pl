@@ -107,7 +107,7 @@ Connected calls a connected_temp with an extra variable to store the till now to
 connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes):-
     connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, [], []).
 
-connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, Routes_So_Far, Prev_Stations):-
+connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, _, _):-
     connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, [], []).
 
 connected_temp(Source, Source, _, _, Max_Duration, Max_Routes, Duration, Routes, Duration, Routes, _):-
@@ -130,8 +130,7 @@ connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duratio
     append_connection(Source, Intermediate, Duration_Added, Transportation, Temp_Ans, Routes_New),
     connected_temp(Intermediate, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, New_Duration, Routes_New,  Temp_Routes_New).
 
-connected(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Prev_Stations, Routes_So_Far, Routes):-
-    connected_temp(Source, Destination, Week, Day, Max_Duration, Max_Routes, Duration, Routes, 0, Routes_So_Far, Prev_Stations).
+
 
 % Travel Plan calls helper procedure with an extra variable Day timings which is a list of day_timing(Week, Day) so to recursive call every home station with every day in a week for whole semester
 travel_plan([],_,_,_,[],[]).
