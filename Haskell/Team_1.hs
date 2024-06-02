@@ -55,8 +55,8 @@ constructSolution (S _ _ action state)= if action == "" then (constructSolution 
 --solve
 solve :: Cell -> [Cell] -> [String]
 solve root goldenCells
-    |  checkGolden (root:goldenCells)= error "Oooh NOOOO, broo get the robot inside the grid!!!"
-    | otherwise = constructSolution (search([S root goldenCells "" Null]))
+    |  checkGolden (root:goldenCells)= constructSolution (search([S root goldenCells "" Null]))
+    | otherwise =  error "Oooh NOOOO, broo get the robot inside the grid!!!"
 
 
 checkGolden []=True
